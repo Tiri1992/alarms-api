@@ -1,0 +1,6 @@
+# Cached
+**/__pycache__
+
+# Credentials
+.env
+
