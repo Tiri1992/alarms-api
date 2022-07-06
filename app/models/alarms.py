@@ -23,7 +23,7 @@ class Alarms(Base):
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('NOW()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True)
-    # user_id = Column(Integer, ForeignKey(
-    #     "users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey(
+        "users.id", name="alarms_user_id_fkey", ondelete="CASCADE"), nullable=False)
 
-    # user = relationship("User", back_populates="alarm")
+    user = relationship("User", back_populates="alarm")

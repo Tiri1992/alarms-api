@@ -9,7 +9,7 @@ from app.database.db import Base, engine
 # This will help load models to map
 from app.models.alarms import Alarms
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 app = FastAPI(
     title="Alarms API",

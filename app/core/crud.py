@@ -46,7 +46,7 @@ def update_alarms(
     db: Session,
     alarm: schema_alarm.AlarmUpdate,
     alarm_id: int
-) -> None:
+) -> model_alarm.Alarms:
 
     curr_alarm = db.query(model_alarm.Alarms).filter(
         model_alarm.Alarms.id == alarm_id
