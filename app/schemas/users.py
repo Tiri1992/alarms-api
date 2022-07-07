@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 from pydantic import EmailStr
 from datetime import datetime
+from typing import Union
 
 
 # Base config
@@ -31,3 +32,18 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+# TODO: REMOVE
+
+
+class UserFake(BaseModel):
+
+    username: str
+    email: Union[str, None] = None
+    fullname: Union[str, None] = None
+    disabled: Union[bool, None] = None
+
+
+class UserFakeInDB(UserFake):
+
+    hashed_password: str
