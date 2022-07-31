@@ -20,7 +20,7 @@ class Alarms(Base):
     day_of_week = Column(Integer, nullable=False)
     time = Column(Time(timezone=True), nullable=False)
     is_on = Column(Boolean, nullable=False, server_default='TRUE')
-    message = Column(String, nullable=True)
+    message = Column(String(150), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('NOW()'))
     updated_at = Column(TIMESTAMP(timezone=True), nullable=True)
