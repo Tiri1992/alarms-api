@@ -3,6 +3,7 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Boolean
 from sqlalchemy import ForeignKey
+from sqlalchemy import Time
 from sqlalchemy import TIMESTAMP
 from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import relationship
@@ -17,7 +18,7 @@ class Alarms(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     day_of_week = Column(Integer, nullable=False)
-    hour = Column(Integer, nullable=False)
+    time = Column(Time(timezone=True), nullable=False)
     is_on = Column(Boolean, nullable=False, server_default='TRUE')
     message = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True),
