@@ -1,13 +1,11 @@
 """Main script."""
-
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 # Api routers
 from app.api.api_v1 import api as apiv1
 from app.core.config import settings
-# DB init
-from app.database.db import Base, engine
-# This will help load models to map
-from app.models.alarms import Alarms
+# Securities
+from app.core.oauth2 import oauth2_scheme
 
 # Base.metadata.create_all(engine)
 

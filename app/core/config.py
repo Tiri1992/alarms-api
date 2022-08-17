@@ -12,7 +12,7 @@ class Tags(str, Enum):
     GENERAL = "General"
     AUTH = "Auth"
     ALARMS = "Alarms"
-
+    USERS = "Users"
 
 class Settings(BaseSettings):
 
@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     root_user: str
     root_password: str
     postgres_uri: PostgresDsn
+    secret_key: str 
+    algorithm: str 
+    access_token_expire_minutes: int
 
     class Config:
         env_file = ".env"
