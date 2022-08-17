@@ -4,46 +4,36 @@ from pydantic import EmailStr
 from datetime import datetime
 from typing import Union
 
-
 # Base config
 
-class UserBase(BaseModel):
+class UserBaseSchema(BaseModel):
 
     email: EmailStr
 
 
-class UserCreate(UserBase):
+class UserCreateSchema(UserBaseSchema):
 
     phone_number: str
     password: str
 
 
-class UserLogin(UserBase):
+class UserLoginSchema(UserBaseSchema):
 
     password: str
 
+class UserUpdateSchema(UserBaseSchema):
+    # Although it overlaps with UserLoginSchema
+    # For consistancy I've kept these separate
+    phone_number: str
 
-class User(UserBase):
+
+class UserDBSchema(UserBaseSchema):
     """Returned obj when user calls get_user."""
     id: int
     phone_number: str
+    is_active: bool
     created_at: datetime
-    updated_at: datetime
+    updated_at: Union[datetime, None]
 
     class Config:
         orm_mode = True
-
-# TODO: REMOVE
-
-
-class UserFake(BaseModel):
-
-    username: str
-    email: Union[str, None] = None
-    fullname: Union[str, None] = None
-    disabled: Union[bool, None] = None
-
-
-class UserFakeInDB(UserFake):
-
-    hashed_password: str
