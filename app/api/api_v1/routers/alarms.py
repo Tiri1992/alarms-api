@@ -7,13 +7,15 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.core.config import Tags
 # Schemas
-from app.schemas import alarms as schemas
+from app.schemas import alarms as alarm_schemas
 # Models
-from app.models import alarms as models
+from app.models import alarms as alarm_models
+from app.models import users as user_models
 # Crud
-from app.core import crud
-# Checks
-from app.core import checks
+from app.core.controller.alarms import CrudAlarm
+from app.core.controller.alarms import CheckAlarms
+# Dependency injections
+from app.core.controller.users import get_current_active_user
 
 router = APIRouter(
     prefix="/alarms",
@@ -21,54 +23,74 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[schemas.Alarm], status_code=status.HTTP_200_OK)
-def get_alarms(db: Session = Depends(get_db)):
-    # TODO: update alarms
-    return crud.get_alarms(db=db)
+@router.get("/", response_model=list[alarm_schemas.AlarmDBSchema], status_code=status.HTTP_200_OK)
+def get_alarms(
+    current_user: user_models.UserModel = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    crud = CrudAlarm(db=db)
+    # current_user returns a user model which we can use to retreive user_id.
+    return crud.get(user_id=current_user.id)
 
 
-@router.post("/", response_model=schemas.Alarm, status_code=status.HTTP_201_CREATED)
-def create_alarm(alarm: schemas.AlarmCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=alarm_schemas.AlarmDBSchema, status_code=status.HTTP_201_CREATED)
+def create_alarm(
+    alarm: alarm_schemas.AlarmCreateSchema,
+    current_user: user_models.UserModel = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
     # Validate alarm doesn't currently exist
-    checks.CheckAlarms.check_alarm_exists(
-        db=db,
-        model=models.Alarms,
+    check = CheckAlarms(db=db)
+    check.exists(
+        user_id=current_user.id,
         schema=alarm,
     )
-    return crud.create_alarm(db=db, alarm=alarm)
+    # If not exists, go ahead and create
+    crud = CrudAlarm(db=db)
+    
+    return crud.create(user_id=current_user.id,schema=alarm)
 
 
 @router.delete("/{alarm_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_alarm(alarm_id: int, db: Session = Depends(get_db)):
-
-    checks.CheckAlarms.check_alarm_exists_by_id(
-        db=db,
-        model=models.Alarms,
+def delete_alarm(
+    alarm_id: int,
+    current_user: user_models.UserModel = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    # Check alarm exists
+    check = CheckAlarms(db=db)
+    check.not_exists_with_id(
         alarm_id=alarm_id,
-    )
+        user_id=current_user.id,
+        )
     # Delete Alarm
-    crud.delete_alarms(
-        db=db,
-        alarm_id=alarm_id,
+    crud = CrudAlarm(db=db)
+    crud.delete(
+        alarm_id=alarm_id
     )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.put("/{alarm_id}", status_code=status.HTTP_200_OK, response_model=schemas.Alarm)
-def update_alarm(alarm_id: int, alarm: schemas.AlarmUpdate, db: Session = Depends(get_db)):
+@router.put("/{alarm_id}", status_code=status.HTTP_200_OK, response_model=alarm_schemas.AlarmDBSchema)
+def update_alarm(
+    alarm_id: int,
+    alarm: alarm_schemas.AlarmUpdateSchema, 
+    current_user: user_models.UserModel = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+    ):
 
     # Check the alarm exists
-    checks.CheckAlarms.check_alarm_exists_by_id(
-        db=db,
-        model=models.Alarms,
-        alarm_id=alarm_id
+    check = CheckAlarms(db=db)
+    check.not_exists(
+        user_id=current_user.id,
+        schema=alarm
     )
 
-    # apply updates
-
-    # return Alarm instance
-    return crud.update_alarms(
-        db=db,
-        alarm=alarm,
+    # Update alarm
+    crud = CrudAlarm(db=db)
+    model: alarm_models.AlarmModel = crud.update(
         alarm_id=alarm_id,
+        schema=alarm,
     )
+
+    return model 
