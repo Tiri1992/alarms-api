@@ -12,7 +12,7 @@ from sqlalchemy.orm import relationship
 from app.database.db import Base
 
 
-class Alarms(Base):
+class AlarmModel(Base):
 
     __tablename__ = "alarms"
 
@@ -27,4 +27,4 @@ class Alarms(Base):
     user_id = Column(Integer, ForeignKey(
         "users.id", name="alarms_user_id_fkey", ondelete="CASCADE"), nullable=False)
 
-    user = relationship("User", back_populates="alarm")
+    user = relationship("UserModel", back_populates="alarm")
