@@ -23,7 +23,7 @@ router = APIRouter(
 )
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserDBSchema)
-def create_user(user: schemas.UserCreateSchema, db: Session = Depends(get_db)):
+async def create_user(user: schemas.UserCreateSchema, db: Session = Depends(get_db)):
     # Fail if user already exists
     check = CheckUser(db)
     check.exists(email=user.email)
@@ -36,5 +36,5 @@ def create_user(user: schemas.UserCreateSchema, db: Session = Depends(get_db)):
     return response
 
 @router.get("/caller", status_code=status.HTTP_200_OK ,response_model=schemas.UserDBSchema)
-def identify_user(user: models.UserModel = Depends(get_current_active_user), db: Session = Depends(get_db)):
+async def identify_user(user: models.UserModel = Depends(get_current_active_user), db: Session = Depends(get_db)):
     return user
