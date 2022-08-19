@@ -72,7 +72,7 @@ class CheckUser(CheckController):
             raise USER_EXIST_CONFLICT
 
 # Get user helper functions
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserModel:
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserModel:
     """Retrieves user info based on the clients token.
 
     Args:
@@ -99,7 +99,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
      
 
-def get_current_active_user(user: UserModel = Depends(get_current_user)) -> UserModel:
+async def get_current_active_user(user: UserModel = Depends(get_current_user)) -> UserModel:
     """Verifies if the current user is activated."""
     if not user.is_active:
         # Either 401 or 403 relevant. Leaning on latter due to account existing

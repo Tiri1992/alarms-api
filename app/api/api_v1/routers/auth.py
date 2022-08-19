@@ -19,7 +19,7 @@ router = APIRouter(
 )
 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
-def login(
+async def login(
     user_credentials: OAuth2PasswordRequestForm = Depends(), 
     db: Session = Depends(get_db)
 ):

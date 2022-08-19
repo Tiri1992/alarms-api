@@ -24,7 +24,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[alarm_schemas.AlarmDBSchema], status_code=status.HTTP_200_OK)
-def get_alarms(
+async def get_alarms(
     current_user: user_models.UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
@@ -34,7 +34,7 @@ def get_alarms(
 
 
 @router.post("/", response_model=alarm_schemas.AlarmDBSchema, status_code=status.HTTP_201_CREATED)
-def create_alarm(
+async def create_alarm(
     alarm: alarm_schemas.AlarmCreateSchema,
     current_user: user_models.UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db)
@@ -52,7 +52,7 @@ def create_alarm(
 
 
 @router.delete("/{alarm_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_alarm(
+async def delete_alarm(
     alarm_id: int,
     current_user: user_models.UserModel = Depends(get_current_active_user),
     db: Session = Depends(get_db)
@@ -72,7 +72,7 @@ def delete_alarm(
 
 
 @router.put("/{alarm_id}", status_code=status.HTTP_200_OK, response_model=alarm_schemas.AlarmDBSchema)
-def update_alarm(
+async def update_alarm(
     alarm_id: int,
     alarm: alarm_schemas.AlarmUpdateSchema, 
     current_user: user_models.UserModel = Depends(get_current_active_user),
