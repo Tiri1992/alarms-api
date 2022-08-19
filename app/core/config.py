@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     root_user: str
     root_password: str
     postgres_uri: PostgresDsn
+    postgres_uri_test: PostgresDsn
     secret_key: str 
     algorithm: str 
     access_token_expire_minutes: int
