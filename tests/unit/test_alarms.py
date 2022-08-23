@@ -10,6 +10,9 @@ def test_get_alarms(authorised_client):
     data = res.json()
     # should return a list type
     assert isinstance(data, list)
+    # No records should be populated as we dont pass `alarm_init`
+    # into signature of test func
+    assert len(data) == 0
 
 def test_create_alarms(authorised_client):
     """Validates POST HTTP method on the path operation alarms/""" 
@@ -33,18 +36,9 @@ def test_create_alarms(authorised_client):
     assert res_create["day_of_week"] == 2
     assert res_create["time"] == "17:00:00+00:00"
 
-def test_delete_alarms(authorised_client):
-    # we need to create some data first to delete
-    body = {
-        "is_on": True, 
-        "message": "test message.",
-        "day_of_week": 2,
-        "time": "17:00:00",
-    }
-    # create resource
-    res_create = authorised_client.post(f"{settings.API_V1}/alarms/", json=body)
-
-    alarm_id = res_create.json()["id"]
+def test_delete_alarms(authorised_client, alarm_init):
+    
+    alarm_id = alarm_init["id"]
 
     res_delete = authorised_client.delete(f"{settings.API_V1}/alarms/{alarm_id}")
 
@@ -52,29 +46,15 @@ def test_delete_alarms(authorised_client):
 
 
 
-def test_update_alarms(authorised_client):
-    body = {
-        "is_on": True, 
-        "message": "test message.",
-        "day_of_week": 2,
-        "time": "17:00:00",
-    }
-
-    # create resource
-    res_create = authorised_client.post(f"{settings.API_V1}/alarms/", json=body)
-
-    assert res_create.status_code == 201
-
-    data_create = res_create.json()
-    # update resource
-    alarm_id = data_create["id"]
-    print(f"{data_create}") 
+def test_update_alarms(authorised_client, alarm_init):
+    
     body_to_update = {
-        "is_on": data_create["is_on"],
-        "message": data_create["message"],
-        "day_of_week": data_create["day_of_week"],
+        "is_on": alarm_init["is_on"],
+        "message": alarm_init["message"],
+        "day_of_week": alarm_init["day_of_week"],
         "time": "18:00:00",
     }
+    alarm_id = alarm_init["id"]
 
     res_update = authorised_client.put(f"{settings.API_V1}/alarms/{alarm_id}", json=body_to_update)
 
