@@ -1,13 +1,9 @@
 """Crud controller for alarms"""
-from fastapi import HTTPException
-from fastapi import status
 from app.core.controller.base import CrudController
 from app.core.controller.base import CheckController
 from sqlalchemy.orm import Session
-from typing import Union
 # Schemas
 from app.schemas.alarms import AlarmCreateSchema
-from app.schemas.alarms import AlarmDBSchema
 from app.schemas.alarms import AlarmDeleteSchema
 from app.schemas.alarms import AlarmUpdateSchema
 # Models
