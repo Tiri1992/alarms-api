@@ -55,6 +55,8 @@ def test_update_alarms(authorised_client, alarm_init):
         "time": "18:00:00",
     }
     alarm_id = alarm_init["id"]
+    # Check alarm time before being updated
+    assert alarm_init["time"] == "17:00:00+00:00"
 
     res_update = authorised_client.put(f"{settings.API_V1}/alarms/{alarm_id}", json=body_to_update)
 
