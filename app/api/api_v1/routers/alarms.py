@@ -81,9 +81,9 @@ async def update_alarm(
 
     # Check the alarm exists
     check = CheckAlarms(db=db)
-    check.not_exists(
+    check.not_exists_with_id(
+        alarm_id=alarm_id,
         user_id=current_user.id,
-        schema=alarm
     )
 
     # Update alarm
