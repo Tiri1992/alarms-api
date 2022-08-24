@@ -1,5 +1,6 @@
 """Unittests associated to /alarms endpoints."""
 from app.core.config import settings
+from app.core.controller.alarms import CrudAlarm
 
 def test_get_alarms(authorised_client):
     """Validates GET HTTP method to the path operation alarms/"""
